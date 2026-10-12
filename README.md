@@ -1,17 +1,41 @@
-# untitled
+# ⏱️ Cronómetro de Estudos (Study Tracker)
 
-A new Flutter project.
+Aplicação mobile/desktop desenvolvida em **Flutter** para ajudar a acompanhar e gerir o tempo dedicado a cada matéria de estudo.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🚀 Funcionalidades
 
-A few resources to get you started if this is your first Flutter project:
+* **Temporizador em Tempo Real**: Medição precisa de horas, minutos e segundos.
+* **Adição de Matérias Personalizadas**: Adicione dinamicamente as disciplinas que deseja estudar sem restrições.
+* **Painel de Estatísticas**:
+  * Tempo total estudado no dia.
+  * Progresso e horas acumuladas na semana.
+  * Identificação automática da matéria mais estudada.
+* **Histórico de Sessões**: Registo detalhado com data, hora e duração de cada sessão finalizada.
+* **Design Moderno**: Interface em modo escuro (Dark Theme) adaptada para dispositivos móveis e desktop.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠️ Tecnologias Utilizadas
+
+* **[Flutter](https://flutter.dev/)** — Framework de desenvolvimento multiplataforma.
+* **[Dart](https://dart.dev/)** — Linguagem de programação.
+* **[Provider](https://pub.dev/packages/provider)** — Gestão de estado reativa.
+* **[Intl](https://pub.dev/packages/intl)** — Formatação de datas e horas.
+
+---
+
+## 📂 Estrutura do Projeto
+
+```text
+lib/
+├── models/
+│   └── study_session.dart   # Modelo de dados da sessão de estudo
+├── providers/
+│   └── timer_provider.dart  # Lógica do cronómetro e estatísticas
+├── screens/
+│   ├── timer_screen.dart    # Tela principal do temporizador
+│   ├── stats_screen.dart    # Tela de estatísticas e progresso
+│   └── history_screen.dart  # Tela do histórico de sessões
+└── main.dart                # Ponto de entrada e navegação
