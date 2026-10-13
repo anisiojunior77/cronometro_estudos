@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/timer_provider.dart';
+import '../utils/format.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -65,8 +66,7 @@ class HistoryScreen extends StatelessWidget {
           // calculamos o índice original correspondente:
           final originalIndex = timerProvider.sessions.length - 1 - index;
           final formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(session.date);
-          final durationText =
-              '${session.duration.inMinutes} min ${session.duration.inSeconds % 60} seg';
+          final durationText = formatDuration(session.duration, showSeconds: true);
 
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),

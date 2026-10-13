@@ -21,9 +21,9 @@ class StudySession {
 
   factory StudySession.fromMap(Map<String, dynamic> map) {
     return StudySession(
-      subject: map['subject'] ?? '',
-      duration: Duration(seconds: map['duration'] ?? 0),
-      date: DateTime.parse(map['date']),
+      subject: (map['subject'] as String?) ?? '',
+      duration: Duration(seconds: (map['duration'] as num?)?.toInt() ?? 0),
+      date: DateTime.parse(map['date'] as String),
     );
   }
 

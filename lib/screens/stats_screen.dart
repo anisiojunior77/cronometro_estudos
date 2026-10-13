@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/timer_provider.dart';
+import '../utils/format.dart';
 
 class StatsScreen extends StatelessWidget {
   const StatsScreen({super.key});
@@ -18,7 +19,7 @@ class StatsScreen extends StatelessWidget {
             Card(
               child: ListTile(
                 title: const Text('Tempo Estudado Hoje'),
-                subtitle: Text('${timerProvider.todayTotalTime.inMinutes} minutos'),
+                subtitle: Text(formatDuration(timerProvider.todayTotalTime)),
                 leading: const Icon(Icons.today),
               ),
             ),
@@ -26,7 +27,7 @@ class StatsScreen extends StatelessWidget {
             Card(
               child: ListTile(
                 title: const Text('Total da Semana'),
-                subtitle: Text('${timerProvider.weekTotalTime.inHours} horas e ${timerProvider.weekTotalTime.inMinutes % 60} minutos'),
+                subtitle: Text(formatDuration(timerProvider.weekTotalTime)),
                 leading: const Icon(Icons.date_range),
               ),
             ),
