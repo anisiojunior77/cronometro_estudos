@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/study_session.dart';
 
 class TimerProvider with ChangeNotifier {
@@ -7,10 +9,13 @@ class TimerProvider with ChangeNotifier {
   int _seconds = 0;
   bool _isRunning = false;
 
-  // Lista de matérias começa vazia
-  final List<String> _subjects = [];
+  List<String> _subjects = [];
   String? _selectedSubject;
-  final List<StudySession> _sessions = [];
+  List<StudySession> _sessions = [];
+
+  TimerProvider() {
+    _loadData();
+  }
 
   int get seconds => _seconds;
   bool get isRunning => _isRunning;
@@ -25,6 +30,62 @@ class TimerProvider with ChangeNotifier {
     return '$hours:$minutes:$secs';
   }
 
+  // --- PERSISTÊNCIA DE DADOS ---
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    _subjects = prefs.getStringList('saved_subjects') ?? [];
+
+    final String? sessionsJson = prefs.getString('saved_sessions');
+    if (sessionsJson != null) {
+      final List<dynamic> decoded = json.decode(sessionsJson);
+      _sessions = decoded.map((item) => StudySession.fromMap(item)).toList();
+    }
+
+    if (_subjects.isNotEmpty) {
+      _selectedSubject = _subjects.first;
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('saved_subjects', _subjects);
+
+    final List<Map<String, dynamic>> sessionsMap =
+    _sessions.map((s) => s.toMap()).toList();
+    await prefs.setString('saved_sessions', json.encode(sessionsMap));
+  }
+
+  // --- REMOÇÃO DO HISTÓRICO E MATÉRIAS ---
+
+  void deleteSession(int index) {
+    if (index >= 0 && index < _sessions.length) {
+      _sessions.removeAt(index);
+      _saveData();
+      notifyListeners();
+    }
+  }
+
+  void clearAllSessions() {
+    _sessions.clear();
+    _saveData();
+    notifyListeners();
+  }
+
+  void deleteSubject(String subjectName) {
+    _subjects.remove(subjectName);
+    if (_selectedSubject == subjectName) {
+      _selectedSubject = _subjects.isNotEmpty ? _subjects.first : null;
+    }
+    _saveData();
+    notifyListeners();
+  }
+
+  // --- LÓGICA DO CRONÔMETRO ---
+
   void setSubject(String newSubject) {
     _selectedSubject = newSubject;
     notifyListeners();
@@ -34,7 +95,8 @@ class TimerProvider with ChangeNotifier {
     final trimmed = newSubject.trim();
     if (trimmed.isNotEmpty && !_subjects.contains(trimmed)) {
       _subjects.add(trimmed);
-      _selectedSubject = trimmed; // Seleciona automaticamente a nova matéria criada
+      _selectedSubject = trimmed;
+      _saveData();
       notifyListeners();
     }
   }
@@ -63,6 +125,7 @@ class TimerProvider with ChangeNotifier {
         duration: Duration(seconds: _seconds),
         date: DateTime.now(),
       ));
+      _saveData();
     }
     _seconds = 0;
     notifyListeners();
@@ -71,7 +134,10 @@ class TimerProvider with ChangeNotifier {
   Duration get todayTotalTime {
     final now = DateTime.now();
     return _sessions
-        .where((s) => s.date.year == now.year && s.date.month == now.month && s.date.day == now.day)
+        .where((s) =>
+    s.date.year == now.year &&
+        s.date.month == now.month &&
+        s.date.day == now.day)
         .fold(Duration.zero, (prev, s) => prev + s.duration);
   }
 
@@ -87,7 +153,8 @@ class TimerProvider with ChangeNotifier {
     if (_sessions.isEmpty) return 'Nenhuma';
     final Map<String, Duration> totals = {};
     for (var session in _sessions) {
-      totals[session.subject] = (totals[session.subject] ?? Duration.zero) + session.duration;
+      totals[session.subject] =
+          (totals[session.subject] ?? Duration.zero) + session.duration;
     }
     return totals.entries.reduce((a, b) => a.value > b.value ? a : b).key;
   }

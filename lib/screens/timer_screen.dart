@@ -42,6 +42,32 @@ class TimerScreen extends StatelessWidget {
     );
   }
 
+  void _confirmDeleteSubject(BuildContext context, TimerProvider provider, String subject) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Excluir Matéria'),
+          content: Text('Tem certeza de que deseja remover "$subject" da lista?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+              onPressed: () {
+                provider.deleteSubject(subject);
+                Navigator.pop(context);
+              },
+              child: const Text('Excluir', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final timerProvider = Provider.of<TimerProvider>(context);
@@ -71,7 +97,22 @@ class TimerScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
+                // Botão Cinza para Apagar Matéria
+                IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.grey.shade800,
+                    foregroundColor: Colors.grey.shade300,
+                  ),
+                  icon: const Icon(Icons.delete_outline),
+                  tooltip: 'Apagar Matéria Selecionada',
+                  onPressed: timerProvider.selectedSubject == null
+                      ? null
+                      : () => _confirmDeleteSubject(
+                      context, timerProvider, timerProvider.selectedSubject!),
+                ),
+                const SizedBox(width: 8),
+                // Botão de Adicionar Matéria
                 IconButton.filled(
                   icon: const Icon(Icons.add),
                   tooltip: 'Adicionar Matéria',
