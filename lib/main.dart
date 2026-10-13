@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'providers/notes_provider.dart';
 import 'providers/timer_provider.dart';
 import 'screens/timer_screen.dart';
 import 'screens/stats_screen.dart';
 import 'screens/history_screen.dart';
+import 'screens/notes_screen.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => TimerProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TimerProvider()),
+        ChangeNotifierProvider(create: (_) => NotesProvider()),
+      ],
       child: const StudyTrackerApp(),
     ),
   );
@@ -45,6 +50,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const TimerScreen(),
     const StatsScreen(),
     const HistoryScreen(),
+    const NotesScreen(),
   ];
 
   @override
@@ -58,6 +64,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           NavigationDestination(icon: Icon(Icons.timer), label: 'Cronômetro'),
           NavigationDestination(icon: Icon(Icons.bar_chart), label: 'Estatísticas'),
           NavigationDestination(icon: Icon(Icons.history), label: 'Histórico'),
+          NavigationDestination(icon: Icon(Icons.sticky_note_2_outlined), label: 'Notas'),
         ],
       ),
     );
